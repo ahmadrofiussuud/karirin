@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skyprompt — Prompt-to-Pixel Art, No Cost!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <style>
+    /* -------------------------------------------------------------
+       SCALING & ROOT VARIABLES
+       ------------------------------------------------------------- */
+    :root {
+      --u: max(100vw / 1440, 100vh / 900);
+      --n: clamp(0.62px, min(100vw / 1440, 100vh / 900), 1.6px);
+      --yellow: #f6f03b;
+      --ink: #161c08;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #3195e0;
+      font-family: 'Poppins', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* -------------------------------------------------------------
+       1440x900 FRAME
+       ------------------------------------------------------------- */
+    .frame {
+      position: absolute;
+      width: calc(1440 * var(--u));
+      height: calc(900 * var(--u));
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      overflow: hidden;
+    }
+
+    /* Scene: Background plate */
+    .scene-plate {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/dc4ac5c7-4eee-48ab-814c-cbba3c9fd1b7.jpg');
+      background-size: 100% 100%;
+      background-position: center top;
+      background-repeat: no-repeat;
+    }
+
+    /* Scene: Looping Video at 111.11% width, left -5.556% */
+    .scene-video {
+      position: absolute;
+      width: 111.11%;
+      left: -5.556%;
+      top: 0;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    /* -------------------------------------------------------------
+       NAVBAR (Pinned to viewport edges, scaled by --n)
+       ------------------------------------------------------------- */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: calc(88 * var(--n));
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .nav-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .nav * {
+      pointer-events: auto;
+    }
+
+    /* Logo: White six-petal flower, 44x44 at (118, 22) */
+    .nav-logo {
+      position: absolute;
+      left: calc(118 * var(--n));
+      top: calc(22 * var(--n));
+      width: calc(44 * var(--n));
+      height: calc(44 * var(--n));
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-logo svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+    }
+
+    /* Links: Story · Study Plan · Showcase · Classroom · Q&A */
+    .nav-links {
+      position: absolute;
+      left: 50%;
+      top: calc(44 * var(--n));
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      gap: calc(35.5 * var(--n));
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #ffffff;
+      font-size: calc(17 * var(--n));
+      font-weight: 500;
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      transition: opacity 0.2s ease;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+    .nav-links a:hover {
+      opacity: 0.85;
+    }
+
+    /* X button: 50px translucent circle, 283 from right */
+    .nav-x-btn {
+      position: absolute;
+      right: calc(283 * var(--n));
+      top: calc(19 * var(--n));
+      width: calc(50 * var(--n));
+      height: calc(50 * var(--n));
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: calc(18 * var(--n));
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .nav-x-btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+      transform: scale(1.05);
+    }
+
+    /* Pill: White "Begin the Journey" pill, 168x44, 107 from right */
+    .nav-pill {
+      position: absolute;
+      right: calc(107 * var(--n));
+      top: calc(22 * var(--n));
+      width: calc(168 * var(--n));
+      height: calc(44 * var(--n));
+      border-radius: calc(22 * var(--n));
+      background: #ffffff;
+      color: #161c08;
+      font-size: calc(15 * var(--n));
+      font-weight: 600;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: 0 calc(4 * var(--n)) calc(18 * var(--n)) rgba(0, 0, 0, 0.18);
+      border: 0;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .nav-pill:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 calc(6 * var(--n)) calc(22 * var(--n)) rgba(0, 0, 0, 0.25);
+    }
+
+    /* -------------------------------------------------------------
+       ROUGH YELLOW HIGHLIGHTER SWIPE (SVG Brush Shape)
+       ------------------------------------------------------------- */
+    .highlighter {
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+
+    .highlighter-bg {
+      position: absolute;
+      inset: -4% -6%;
+      width: 112%;
+      height: 112%;
+      z-index: -1;
+      filter: drop-shadow(0 0 calc(1.5 * var(--u)) rgba(246, 240, 59, 0.75));
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .highlighter-bg path {
+      fill: var(--yellow);
+    }
+
+    .highlighter-text {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.018em;
+      color: var(--ink);
+      line-height: 1;
+      position: relative;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    /* -------------------------------------------------------------
+       HEADLINE BLOCK (Centered in 1440x900 frame)
+       ------------------------------------------------------------- */
+    /* "Begin" at (657, 117), 131x44, 40px */
+    .hl-begin {
+      left: calc(657 * var(--u));
+      top: calc(117 * var(--u));
+      width: calc(131 * var(--u));
+      height: calc(44 * var(--u));
+    }
+    .hl-begin .highlighter-text {
+      font-size: calc(40 * var(--u));
+    }
+
+    /* "Prompt-to-Pixel Art": 103px, centred, top 140 */
+    .main-headline {
+      position: absolute;
+      left: 50%;
+      top: calc(140 * var(--u));
+      transform: translateX(-50%);
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: calc(103 * var(--u));
+      font-weight: 400;
+      color: #ffffff;
+      -webkit-text-stroke: calc(1.1 * var(--u)) #ffffff;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1;
+      z-index: 4;
+      text-shadow: 0 calc(4 * var(--u)) calc(20 * var(--u)) rgba(0, 50, 100, 0.2);
+    }
+
+    /* "No Cost!": 176x45 at (638, 241), 39px */
+    .hl-no-cost {
+      left: calc(638 * var(--u));
+      top: calc(241 * var(--u));
+      width: calc(176 * var(--u));
+      height: calc(45 * var(--u));
+    }
+    .hl-no-cost .highlighter-text {
+      font-size: calc(39 * var(--u));
+    }
+
+    /* Subline: 17.2px / 24.5px, centred, top 312 */
+    .subline {
+      position: absolute;
+      left: 50%;
+      top: calc(312 * var(--u));
+      transform: translateX(-50%);
+      font-family: 'Poppins', sans-serif;
+      font-size: calc(17.2 * var(--u));
+      line-height: calc(24.5 * var(--u));
+      color: #ffffff;
+      text-align: center;
+      font-weight: 500;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+      z-index: 5;
+    }
+
+    /* -------------------------------------------------------------
+       CARDS (Fan of 4 on the floating island)
+       ------------------------------------------------------------- */
+    .cards-fan {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .art-card {
+      position: absolute;
+      width: calc(132 * var(--u));
+      height: calc(162 * var(--u));
+      border: calc(5 * var(--u)) solid #ffffff;
+      border-radius: calc(12 * var(--u));
+      box-shadow: 0 calc(10 * var(--u)) calc(24 * var(--u)) rgba(0, 0, 0, 0.22);
+      object-fit: cover;
+      pointer-events: auto;
+      cursor: pointer;
+      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease;
+      transform-origin: center bottom;
+    }
+
+    /* Card 1: Cottage on sea cliff at (472, 419) at -12° */
+    .card-1 {
+      left: calc(472 * var(--u));
+      top: calc(419 * var(--u));
+      transform: rotate(-12deg);
+      z-index: 10;
+    }
+
+    /* Card 2: Kitten in blue beanie at (601, 407) at -4° */
+    .card-2 {
+      left: calc(601 * var(--u));
+      top: calc(407 * var(--u));
+      transform: rotate(-4deg);
+      z-index: 11;
+    }
+
+    /* Card 3: Smiling succulent at (711, 409) at 4° */
+    .card-3 {
+      left: calc(711 * var(--u));
+      top: calc(409 * var(--u));
+      transform: rotate(4deg);
+      z-index: 11;
+    }
+
+    /* Card 4: Golden retriever cowboy at (827, 419) at 12° */
+    .card-4 {
+      left: calc(827 * var(--u));
+      top: calc(419 * var(--u));
+      transform: rotate(12deg);
+      z-index: 10;
+    }
+
+    /* Hover: cards lift 18u, straighten, grow to 1.07 */
+    .art-card:hover {
+      transform: translateY(calc(-18 * var(--u))) rotate(0deg) scale(1.07) !important;
+      z-index: 30 !important;
+      box-shadow: 0 calc(18 * var(--u)) calc(36 * var(--u)) rgba(0, 0, 0, 0.32) !important;
+    }
+
+    /* -------------------------------------------------------------
+       LABELS AND HAND-DRAWN ARROWS
+       ------------------------------------------------------------- */
+    /* "Starts from Zero!" at (395, 424), rotated -11° */
+    .lbl-starts-zero {
+      left: calc(395 * var(--u));
+      top: calc(424 * var(--u));
+      padding: calc(6 * var(--u)) calc(12 * var(--u));
+      transform: rotate(-11deg);
+      z-index: 20;
+    }
+    .lbl-starts-zero .highlighter-text {
+      font-size: calc(16 * var(--u));
+    }
+
+    .arrow-starts-zero {
+      position: absolute;
+      left: calc(410 * var(--u));
+      top: calc(460 * var(--u));
+      width: calc(60 * var(--u));
+      height: calc(45 * var(--u));
+      pointer-events: none;
+      z-index: 15;
+      filter: drop-shadow(0 0 calc(1.5 * var(--u)) rgba(246, 240, 59, 0.75));
+    }
+
+    /* "Real Client Results" at (927, 518), rotated -6° */
+    .lbl-client-results {
+      left: calc(927 * var(--u));
+      top: calc(518 * var(--u));
+      padding: calc(6 * var(--u)) calc(14 * var(--u));
+      transform: rotate(-6deg);
+      z-index: 20;
+    }
+    .lbl-client-results .highlighter-text {
+      font-size: calc(16 * var(--u));
+    }
+
+    .arrow-client-results {
+      position: absolute;
+      left: calc(910 * var(--u));
+      top: calc(470 * var(--u));
+      width: calc(65 * var(--u));
+      height: calc(110 * var(--u));
+      pointer-events: none;
+      z-index: 15;
+      filter: drop-shadow(0 0 calc(1.5 * var(--u)) rgba(246, 240, 59, 0.75));
+    }
+
+    /* -------------------------------------------------------------
+       CALL TO ACTION (ON THE ISLAND)
+       ------------------------------------------------------------- */
+    /* Highlighter "Zero Cost": 96x25 at (672, 584) */
+    .cta-zero-cost {
+      left: calc(672 * var(--u));
+      top: calc(584 * var(--u));
+      width: calc(96 * var(--u));
+      height: calc(25 * var(--u));
+      z-index: 25;
+    }
+    .cta-zero-cost .highlighter-text {
+      font-size: calc(12.5 * var(--u));
+    }
+
+    /* White pill "Begin the Journey": 195x44 at (622, 624), 17px Poppins 600 */
+    .cta-pill-button {
+      position: absolute;
+      left: calc(622 * var(--u));
+      top: calc(624 * var(--u));
+      width: calc(195 * var(--u));
+      height: calc(44 * var(--u));
+      border-radius: calc(22 * var(--u));
+      background: #ffffff;
+      color: #161c08;
+      font-family: 'Poppins', sans-serif;
+      font-size: calc(17 * var(--u));
+      font-weight: 600;
+      display: grid;
+      place-items: center;
+      border: 0;
+      cursor: pointer;
+      box-shadow: 0 calc(4 * var(--u)) calc(18 * var(--u)) rgba(0, 0, 0, 0.2);
+      z-index: 25;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
+    .cta-pill-button:hover {
+      transform: translateY(calc(-2 * var(--u)));
+      box-shadow: 0 calc(8 * var(--u)) calc(24 * var(--u)) rgba(0, 0, 0, 0.28);
+    }
+
+    /* Note "No art skills needed to start.": 15.6px, centred at top 682 */
+    .cta-note {
+      position: absolute;
+      left: 50%;
+      top: calc(682 * var(--u));
+      transform: translateX(-50%);
+      font-family: 'Poppins', sans-serif;
+      font-size: calc(15.6 * var(--u));
+      font-weight: 500;
+      color: #ffffff;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
+      white-space: nowrap;
+      z-index: 25;
+    }
+
+    /* -------------------------------------------------------------
+       ENTRANCE ANIMATION STYLES (Swipes & Blur Reveals)
+       ------------------------------------------------------------- */
+    .swipe-anim {
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .swipe-anim.swiped {
+      clip-path: inset(0 0 0 0);
+    }
+
+    .word-land {
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .word-land.landed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Back to Karirin banner in demo */
+    .karirin-return-pill {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: transform 0.2s ease;
+    }
+    .karirin-return-pill:hover {
+      transform: translateY(-2px);
+      background: #0f172a;
+    }
+
+    /* -------------------------------------------------------------
+       PHONES (≤ 820px)
+       ------------------------------------------------------------- */
+    @media (max-width: 820px) {
+      body {
+        overflow-y: auto;
+      }
+      .nav {
+        height: 60px;
+        background: rgba(49, 149, 224, 0.95);
+        backdrop-filter: blur(10px);
+      }
+      .nav-links {
+        display: none;
+      }
+      .nav-logo {
+        left: 16px;
+        top: 8px;
+      }
+      .nav-x-btn {
+        right: 80px;
+        top: 10px;
+        width: 40px;
+        height: 40px;
+      }
+      .nav-pill {
+        right: 16px;
+        top: 10px;
+        width: 140px;
+        height: 40px;
+        font-size: 13px;
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .scene-video {
+        display: none;
+      }
+      .art-card {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =============================================================
+       FIXED TOP NAVIGATION (Pinned to viewport edges, scaled by --n)
+       ============================================================= -->
+  <nav class="nav" aria-label="Main Navigation">
+    <div class="nav-inner">
+      <!-- Logo: White six-petal flower, 44x44 at (118, 22) -->
+      <a class="nav-logo" href="/" aria-label="Skyprompt Home">
+        <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 6 petals arranged symmetrically -->
+          <circle cx="22" cy="11" r="8.5" fill="#ffffff"/>
+          <circle cx="31.5" cy="16.5" r="8.5" fill="#ffffff"/>
+          <circle cx="31.5" cy="27.5" r="8.5" fill="#ffffff"/>
+          <circle cx="22" cy="33" r="8.5" fill="#ffffff"/>
+          <circle cx="12.5" cy="27.5" r="8.5" fill="#ffffff"/>
+          <circle cx="12.5" cy="16.5" r="8.5" fill="#ffffff"/>
+          <!-- Center core -->
+          <circle cx="22" cy="22" r="7.5" fill="#ffffff"/>
+        </svg>
+      </a>
+
+      <!-- Links: Story · Study Plan · Showcase · Classroom · Q&A -->
+      <ul class="nav-links">
+        <li><a href="#story">Story</a></li>
+        <li><a href="#study-plan">Study Plan</a></li>
+        <li><a href="#showcase">Showcase</a></li>
+        <li><a href="#classroom">Classroom</a></li>
+        <li><a href="#qa">Q&A</a></li>
+      </ul>
+
+      <!-- X Button: 50px translucent white circle, 283 from right -->
+      <button class="nav-x-btn" aria-label="Close or Menu">
+        ✕
+      </button>
+
+      <!-- Pill: White "Begin the Journey" pill, 168x44, 107 from right -->
+      <a class="nav-pill" href="/#home">
+        Begin the Journey
+      </a>
+    </div>
+  </nav>
+
+  <!-- =============================================================
+       1440x900 FRAME SCALED BY --u
+       ============================================================= -->
+  <div class="frame">
+    <!-- Plate Image (1440x900 background) -->
+    <div class="scene-plate"></div>
+
+    <!-- Motion Video Layer (Waterfall flowing, butterflies fluttering) -->
+    <video
+      class="scene-video"
+      src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/81764d30-8120-4ab5-8491-4dd852b82496.mp4"
+      autoplay
+      loop
+      muted
+      playsinline
+    ></video>
+
+    <!-- HEADLINE BLOCK -->
+    <!-- 1. Highlighter "Begin": 131x44 at (657, 117), 40px -->
+    <div class="highlighter hl-begin" id="hlBegin">
+      <svg class="highlighter-bg swipe-anim" id="swipeBegin" viewBox="0 0 131 44" preserveAspectRatio="none">
+        <path d="M4,14 C22,6 55,10 88,7 C108,5 124,8 128,15 C130,22 129,32 126,38 C115,42 85,39 60,42 C35,44 15,40 5,42 C2,38 1,22 4,14 Z"/>
+      </svg>
+      <span class="highlighter-text word-land" id="wordBegin">Begin</span>
+    </div>
+
+    <!-- 2. Headline "Prompt-to-Pixel Art": 103px, centred, top 140 -->
+    <h1 class="main-headline" id="mainHeadline">Prompt-to-Pixel Art</h1>
+
+    <!-- 3. Highlighter "No Cost!": 176x45 at (638, 241), 39px -->
+    <div class="highlighter hl-no-cost" id="hlNoCost">
+      <svg class="highlighter-bg swipe-anim" id="swipeNoCost" viewBox="0 0 176 45" preserveAspectRatio="none">
+        <path d="M5,15 C30,7 75,12 120,8 C150,6 168,9 173,16 C175,24 174,33 170,40 C155,44 115,40 80,43 C45,45 20,41 6,43 C2,38 2,24 5,15 Z"/>
+      </svg>
+      <span class="highlighter-text word-land" id="wordNoCost">No Cost!</span>
+    </div>
+
+    <!-- 4. Subline: centred, top 312, 17.2px / 24.5px -->
+    <p class="subline" id="subline">
+      Turn plain words into images you love — lesson<br>by lesson, from first idea to finished piece.
+    </p>
+
+    <!-- -----------------------------------------------------------
+         CARDS FAN (Four 132x162 cards on the floating island)
+         ----------------------------------------------------------- -->
+    <div class="cards-fan">
+      <!-- Card 1: Cottage on sea cliff (472, 419) at -12° -->
+      <img
+        class="art-card card-1"
+        src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/37b0e4f8-9780-409b-9aa4-f855a9a4ef24.webp"
+        alt="Cottage on sea cliff"
+      />
+
+      <!-- Card 2: Kitten in blue beanie (601, 407) at -4° -->
+      <img
+        class="art-card card-2"
+        src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/02be94e0-6903-4edd-b5ec-a10eb62d166e.webp"
+        alt="Kitten in blue beanie and scarf"
+      />
+
+      <!-- Card 3: Smiling succulent (711, 409) at 4° -->
+      <img
+        class="art-card card-3"
+        src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/73e9f810-8b43-4548-a4b1-830b1b99cdfd.webp"
+        alt="Smiling succulent in terracotta pot"
+      />
+
+      <!-- Card 4: Golden retriever cowboy (827, 419) at 12° -->
+      <img
+        class="art-card card-4"
+        src="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/fde79b9a-ae7c-439f-9a96-f727754defb7.webp"
+        alt="Golden retriever in cowboy hat and red bandana"
+      />
+    </div>
+
+    <!-- -----------------------------------------------------------
+         LABELS AND HAND-DRAWN ARROWS
+         ----------------------------------------------------------- -->
+    <!-- Label: "Starts from Zero!" at (395, 424), rotated -11° -->
+    <div class="highlighter lbl-starts-zero">
+      <svg class="highlighter-bg" viewBox="0 0 160 40" preserveAspectRatio="none">
+        <path d="M4,12 C30,6 80,10 120,7 C145,5 155,9 158,16 C160,25 158,34 154,38 C135,42 90,38 55,41 C25,43 12,39 4,40 C1,35 1,20 4,12 Z"/>
+      </svg>
+      <span class="highlighter-text">Starts from Zero!</span>
+    </div>
+
+    <!-- Hand-drawn arrow curving into first card -->
+    <svg class="arrow-starts-zero" viewBox="0 0 60 45" fill="none">
+      <path d="M10,8 C25,12 40,24 48,38" stroke="#f6f03b" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M38,36 L48,39 L47,28" stroke="#f6f03b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+
+    <!-- Label: "Real Client Results" at (927, 518), rotated -6° -->
+    <div class="highlighter lbl-client-results">
+      <svg class="highlighter-bg" viewBox="0 0 170 40" preserveAspectRatio="none">
+        <path d="M4,12 C35,6 90,9 130,7 C155,6 166,10 168,17 C170,25 168,34 163,38 C140,42 95,38 60,41 C25,43 12,39 4,40 C1,35 1,20 4,12 Z"/>
+      </svg>
+      <span class="highlighter-text">Real Client Results</span>
+    </div>
+
+    <!-- Arrow curling up to dog card and down -->
+    <svg class="arrow-client-results" viewBox="0 0 65 110" fill="none">
+      <!-- Upper arrow curling up to card 4 -->
+      <path d="M45,45 C35,30 25,18 10,12" stroke="#f6f03b" stroke-width="4" stroke-linecap="round"/>
+      <path d="M12,23 L9,11 L21,12" stroke="#f6f03b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Lower arrow curving down -->
+      <path d="M45,65 C40,80 32,95 20,102" stroke="#f6f03b" stroke-width="4" stroke-linecap="round"/>
+      <path d="M32,95 L19,103 L24,88" stroke="#f6f03b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+
+    <!-- -----------------------------------------------------------
+         CALL TO ACTION ON THE ISLAND
+         ----------------------------------------------------------- -->
+    <!-- Highlighter "Zero Cost": 96x25 at (672, 584) -->
+    <div class="highlighter cta-zero-cost">
+      <svg class="highlighter-bg" viewBox="0 0 96 25" preserveAspectRatio="none">
+        <path d="M3,8 C20,4 50,7 75,5 C88,4 93,6 95,10 C96,16 95,21 92,23 C80,26 55,23 35,25 C15,26 7,24 2,25 C1,22 1,13 3,8 Z"/>
+      </svg>
+      <span class="highlighter-text">Zero Cost</span>
+    </div>
+
+    <!-- White pill "Begin the Journey": 195x44 at (622, 624), 17px Poppins 600 -->
+    <a class="cta-pill-button" href="/#home">
+      Begin the Journey
+    </a>
+
+    <!-- Note "No art skills needed to start.": 15.6px, centred at top 682 -->
+    <div class="cta-note">
+      No art skills needed to start.
+    </div>
+  </div>
+
+  <!-- Quick Floating Link back to Karirin Workspace -->
+  <a class="karirin-return-pill" href="/#home" title="Kembali ke Ruang Tumbuh Karirin">
+    <span>← Kembali ke Karirin</span>
+  </a>
+
+  <!-- =============================================================
+       ENTRANCE MOTION (Web Animations API)
+       ============================================================= -->
+  <script>
+    (function () {
+      const isReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (isReduced) {
+        document.getElementById('swipeBegin').classList.add('swiped');
+        document.getElementById('wordBegin').classList.add('landed');
+        document.getElementById('swipeNoCost').classList.add('swiped');
+        document.getElementById('wordNoCost').classList.add('landed');
+        return;
+      }
+
+      // Initial state: hide headline and subline for entrance
+      const headline = document.getElementById('mainHeadline');
+      const subline = document.getElementById('subline');
+      const swipeBegin = document.getElementById('swipeBegin');
+      const wordBegin = document.getElementById('wordBegin');
+      const swipeNoCost = document.getElementById('swipeNoCost');
+      const wordNoCost = document.getElementById('wordNoCost');
+      const nav = document.querySelector('.nav');
+
+      headline.style.opacity = '0';
+      subline.style.opacity = '0';
+
+      // 1. Logo & Nav fade in
+      nav.animate([
+        { opacity: 0, transform: 'translateY(-10px)' },
+        { opacity: 1, transform: 'translateY(0)' }
+      ], {
+        duration: 400,
+        easing: 'ease-out',
+        fill: 'forwards'
+      });
+
+      // 2. at 0.35s: "Begin" yellow swipes left to right, then word lands
+      setTimeout(() => {
+        swipeBegin.classList.add('swiped');
+        setTimeout(() => {
+          wordBegin.classList.add('landed');
+        }, 150);
+      }, 350);
+
+      // 3. at 0.7s: Headline develops out of 14px blur with 1.04 -> 1 scale
+      setTimeout(() => {
+        headline.animate([
+          { opacity: 0, filter: 'blur(14px)', transform: 'translateX(-50%) scale(1.04)' },
+          { opacity: 1, filter: 'blur(0px)', transform: 'translateX(-50%) scale(1)' }
+        ], {
+          duration: 750,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          fill: 'forwards'
+        });
+      }, 700);
+
+      // 4. at 1.45s: "No Cost!" marks the same way
+      setTimeout(() => {
+        swipeNoCost.classList.add('swiped');
+        setTimeout(() => {
+          wordNoCost.classList.add('landed');
+        }, 150);
+      }, 1450);
+
+      // 5. at 1.85s: subline settles out of a soft blur
+      setTimeout(() => {
+        subline.animate([
+          { opacity: 0, filter: 'blur(8px)', transform: 'translateX(-50%) translateY(8px)' },
+          { opacity: 1, filter: 'blur(0px)', transform: 'translateX(-50%) translateY(0)' }
+        ], {
+          duration: 650,
+          easing: 'ease-out',
+          fill: 'forwards'
+        });
+      }, 1850);
+    })();
+  </script>
+</body>
+</html>
