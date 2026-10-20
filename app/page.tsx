@@ -1050,11 +1050,39 @@ export default function Workspace() {
                   </div>
 
                   <div className="welcome-side-illustration">
-                    <div className="illu-box">
-                      <Mountain size={54} strokeWidth={1.3} />
-                      <div className="illu-stats">
-                        <strong>{doneCount}</strong>
-                        <small>Langkah Selesai</small>
+                    <div className="growth-island-widget">
+                      <div className="island-badge-pill">
+                        <Sparkles size={12} className="island-spark-icon" />
+                        <span>
+                          {doneCount >= 8
+                            ? "Penjelajah Tangguh"
+                            : doneCount >= 4
+                            ? "Perintis Langkah"
+                            : "Tunas Penjelajah"}
+                        </span>
+                      </div>
+                      <div className="island-avatar-center">
+                        <div className="island-icon-halo">
+                          {doneCount >= 8 ? (
+                            <Award size={34} strokeWidth={1.8} />
+                          ) : doneCount >= 4 ? (
+                            <Compass size={34} strokeWidth={1.8} />
+                          ) : (
+                            <Leaf size={34} strokeWidth={1.8} />
+                          )}
+                        </div>
+                        <div className="island-glow-ring" />
+                      </div>
+                      <div className="island-micro-metrics">
+                        <div className="micro-metric-item">
+                          <strong>{doneCount}</strong>
+                          <small>Langkah Tuntas</small>
+                        </div>
+                        <div className="micro-metric-divider" />
+                        <div className="micro-metric-item">
+                          <strong>{started}</strong>
+                          <small>Peluang Aktif</small>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1342,11 +1370,37 @@ export default function Workspace() {
                         </label>
                       </div>
 
-                      <div className="capacity-status-banner">
-                        <Timer size={18} />
-                        <span>Sisa kapasitas mingguanmu yang benar-benar siap:</span>
-                        <strong>{Math.max(0, draft.hours - draft.committed)} jam / minggu</strong>
-                      </div>
+                      {(() => {
+                        const freeHours = Math.max(0, draft.hours - draft.committed);
+                        const freeRatio = draft.hours > 0 ? (freeHours / draft.hours) * 100 : 0;
+                        const moodStatus =
+                          freeHours >= 12
+                            ? { label: "🌟 Sangat Luang & Siap Tantangan", fillClass: "safe", note: "Bagus sekali! Kamu punya ruang luas untuk berani eksplorasi tanpa risiko mengorbankan istirahat." }
+                            : freeHours >= 6
+                            ? { label: "🍃 Seimbang & Realistis", fillClass: "safe", note: "Kapasitas ideal untuk 1–2 aktivitas pengembangan diri mingguan yang fokus." }
+                            : freeHours >= 1
+                            ? { label: "⚡ Padat & Fokus Mikro", fillClass: "warning", note: "Waktu terbatas. Pilihlah kegiatan dengan luaran ringan dan langkah mikro 15–30 menit." }
+                            : { label: "⚠️ Kapasitas Penuh", fillClass: "danger", note: "Seluruh waktu luangmu sudah terpakai. Jaga energimu dan seimbangkan komitmen sebelum menambah hal baru." };
+
+                        return (
+                          <div className="capacity-mood-widget">
+                            <div className="capacity-mood-header">
+                              <span className="capacity-mood-title">
+                                <Timer size={16} />
+                                <span>{moodStatus.label}</span>
+                              </span>
+                              <strong className="capacity-mood-val">{freeHours} jam / minggu</strong>
+                            </div>
+                            <div className="capacity-mood-bar-track">
+                              <div
+                                className={`capacity-mood-bar-fill ${moodStatus.fillClass}`}
+                                style={{ width: `${Math.min(100, Math.max(8, freeRatio))}%` }}
+                              />
+                            </div>
+                            <p className="capacity-mood-desc">{moodStatus.note}</p>
+                          </div>
+                        );
+                      })()}
 
                       <label>
                         Anggaran Biaya per Peluang (Rp)
@@ -1381,29 +1435,45 @@ export default function Workspace() {
 
                   <aside className="profile-side-preview">
                     <div className="side-card">
-                      <div className="side-card-icon">
-                        <Target size={36} />
+                      <div className="passport-header-badge">
+                        <Sparkles size={11} className="island-spark-icon" />
+                        <span>PASPOR PERTUMBUHAN KARIER</span>
                       </div>
+
+                      <div className="passport-user-hero">
+                        <div className="passport-avatar-circle">
+                          {draft.name.trim() ? draft.name.trim().charAt(0).toUpperCase() : "🌟"}
+                        </div>
+                        <div className="passport-user-info">
+                          <strong>{draft.name.trim() || "Calon Penjelajah"}</strong>
+                          <small>{draft.university.trim() || "Mahasiswa Siap Tumbuh"}</small>
+                        </div>
+                      </div>
+
                       <h3>Pengalaman kecil tetap punya arti.</h3>
                       <p>
                         Belum pernah ikut lomba bergengsi? Tidak apa-apa. Tugas kuliah, membuat konten sendiri, atau
-                        sekadar rasa ingin tahu juga merupakan titik awal yang valid.
+                        sekadar rasa ingin tahu juga merupakan titik awal yang sah dan berharga.
                       </p>
                       <hr className="divider" />
                       <div className="side-info-alert">
-                        <Info size={16} />
-                        <small>Data profilmu tersimpan lokal di browser ini secara privat.</small>
+                        <ShieldCheck size={16} />
+                        <small>Data profilmu tersimpan aman secara privat di browsermu.</small>
                       </div>
 
                       <div className="side-preview-capsule">
                         <span className="capsule-label">TARGET TERDEKAT</span>
                         <strong>{draft.goal}</strong>
                         <div className="tags-wrap">
-                          {draft.interests.map((i) => (
-                            <span className="tag-chip" key={i}>
-                              {i}
-                            </span>
-                          ))}
+                          {draft.interests.length > 0 ? (
+                            draft.interests.map((i) => (
+                              <span className="tag-chip" key={i}>
+                                {i}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="caption-note">Pilih minat di formulir...</span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1656,6 +1726,19 @@ export default function Workspace() {
                           className="range-slider"
                           aria-label="Target waktu persiapan dalam minggu"
                         />
+                        <div className="slider-quick-presets" style={{ display: "flex", gap: "8px", marginTop: "12px", flexWrap: "wrap" }}>
+                          {[2, 3, 4, 6, 8].map((w) => (
+                            <button
+                              key={w}
+                              type="button"
+                              onClick={() => setWeeks(w)}
+                              className={`filter-pill ${weeks === w ? "active" : ""}`}
+                              style={{ padding: "4px 12px", fontSize: "11.5px" }}
+                            >
+                              {w} Minggu
+                            </button>
+                          ))}
+                        </div>
                         <small className="slider-hint-small">
                           Skenario 1–8 minggu · Tetap periksa tenggat resmi bila mengikuti peluang nyata.
                         </small>
@@ -1899,10 +1982,18 @@ export default function Workspace() {
                             {completed === j.tasks.length && (
                               <div className="celebrate-banner">
                                 <CheckCircle2 size={24} />
-                                <div>
+                                <div style={{ flex: 1 }}>
                                   <strong>Hebat! Semua langkah persiapan tuntas.</strong>
                                   <p>Kamu sudah bergerak sangat jauh dari titik mula. Siap untuk mencatat pendaftaran?</p>
                                 </div>
+                                <button
+                                  className="button primary compact-btn"
+                                  onClick={() => go("progress", j.opportunityId)}
+                                  style={{ whiteSpace: "nowrap" }}
+                                >
+                                  <span>Catat di Refleksi</span>
+                                  <ArrowRight size={14} />
+                                </button>
                               </div>
                             )}
                           </section>
@@ -2035,13 +2126,27 @@ export default function Workspace() {
   );
 }
 
-function PageHeading({ kicker, title, text }: { kicker: string; title: string; text: string }) {
+function PageHeading({
+  kicker,
+  title,
+  text,
+  badge = "KARIRIN · V1.2",
+}: {
+  kicker: string;
+  title: string;
+  text: string;
+  badge?: string;
+}) {
   return (
     <div className="page-header-banner">
       <div className="header-copy">
         <BrushSwipe text={kicker} fontSize="11px" />
         <h1>{title}</h1>
         <p>{text}</p>
+      </div>
+      <div className="edition-badge">
+        <Sparkles size={11} className="island-spark-icon" />
+        <span>{badge}</span>
       </div>
     </div>
   );
