@@ -259,21 +259,35 @@ export default function Workspace() {
     setNotice("Catatan perjalanan berhasil diekspor.");
   }
 
+  const oppImages: Record<string, string> = {
+    design: "/images/card-desain.jpg",
+    essay: "/images/card-esai.jpg",
+    code: "/images/card-teknologi.jpg",
+    social: "/images/card-sosial.jpg",
+    business: "/images/card-bisnis.jpg",
+  };
+
   function OpportunityCard({ o, compact = false }: { o: Opportunity; compact?: boolean }) {
     const matched = state.profile.interests.includes(o.category);
     const isSaved = state.saved.includes(o.id);
+    const imgSrc = oppImages[o.id] || "/images/card-desain.jpg";
 
     return (
-      <article className={`opp-card ${compact ? "compact" : ""}`}>
-        <div className="opp-header">
-          <div className={`opp-badge ${o.color}`}>{o.mark}</div>
-          <div className="opp-meta-tags">
-            <span className="opp-category">{o.category}</span>
-            <span className="opp-dot">·</span>
-            <span className="opp-type">{o.type}</span>
-          </div>
+      <article className={`opp-card ${compact ? "compact" : ""} opp-color-${o.color}`}>
+        {/* 3D Isometric Card Image Banner */}
+        <div className="opp-card-media-banner" onClick={() => go("check", o.id)}>
+          <img src={imgSrc} alt={o.title} className="opp-card-img" />
+          <div className="opp-card-media-overlay" />
+          <span className={`opp-category-badge-chip ${o.color}`}>
+            {o.category}
+          </span>
+          {matched && (
+            <span className="opp-match-pill-floating">
+              <Check size={11} strokeWidth={2.5} /> Sesuai Minat
+            </span>
+          )}
           <button
-            className={`opp-save-btn ${isSaved ? "active" : ""}`}
+            className={`opp-save-btn-floating ${isSaved ? "active" : ""}`}
             onClick={(e) => {
               e.stopPropagation();
               toggleSave(o.id);
@@ -281,40 +295,38 @@ export default function Workspace() {
             aria-label={isSaved ? "Hapus simpanan" : "Simpan peluang"}
             title={isSaved ? "Tersimpan" : "Simpan"}
           >
-            <Bookmark size={16} fill={isSaved ? "currentColor" : "none"} />
+            <Bookmark size={15} fill={isSaved ? "currentColor" : "none"} />
           </button>
         </div>
 
-        <button className="opp-title" onClick={() => go("check", o.id)}>
-          {o.title}
-        </button>
-
-        <p className="opp-organizer">{o.organizer}</p>
-
-        <div className="opp-footer">
-          <div className="opp-specs">
-            <span className="opp-spec-item" title="Estimasi waktu persiapan">
-              <Timer size={13} />
-              {o.hours} jam
-            </span>
-            <span className="opp-spec-item" title="Biaya pendaftaran">
-              <Wallet size={13} />
-              {money(o.cost)}
-            </span>
-            <span className="opp-spec-pill">{o.level}</span>
+        <div className="opp-card-body-content">
+          <div className="opp-header-sub">
+            <span className="opp-type-pill">{o.type}</span>
+            <span className="opp-level-pill">{o.level}</span>
           </div>
-          {matched && (
-            <span className="opp-match-pill">
-              <Check size={11} /> Sesuai Minat
-            </span>
-          )}
-        </div>
 
-        <div className="opp-actions">
-          <button className="opp-detail-btn" onClick={() => go("check", o.id)}>
-            <span>Cek Kelayakan & Waktu</span>
-            <ArrowUpRight size={15} />
+          <button className="opp-title" onClick={() => go("check", o.id)}>
+            {o.title}
           </button>
+
+          <p className="opp-organizer">{o.organizer}</p>
+
+          <div className="opp-footer">
+            <div className="opp-specs">
+              <span className="opp-spec-item" title="Estimasi waktu persiapan">
+                <Timer size={13} />
+                {o.hours} jam
+              </span>
+              <span className="opp-spec-item" title="Biaya pendaftaran">
+                <Wallet size={13} />
+                {money(o.cost)}
+              </span>
+            </div>
+            <button className="opp-detail-btn" onClick={() => go("check", o.id)}>
+              <span>Cek Waktu</span>
+              <ArrowUpRight size={14} />
+            </button>
+          </div>
         </div>
       </article>
     );
@@ -633,64 +645,100 @@ export default function Workspace() {
                     </div>
 
                     <div className="pillars-grid">
-                      <div className="pillar-card">
-                        <div className="pillar-icon-box p-indigo">
-                          <UserRound size={24} />
+                      <div className="pillar-card pillar-dna">
+                        <div className="pillar-artwork-box">
+                          <img
+                            src="/images/pillar-dna.jpg"
+                            alt="Growth DNA 3D Asset"
+                            className="pillar-artwork-img"
+                          />
+                          <span className="pillar-num-badge">01</span>
                         </div>
-                        <span className="pillar-num">01</span>
-                        <h3>Growth DNA</h3>
-                        <p>
-                          Catat minat, tujuan terdekat, dan jam luang mingguanmu dengan jujur. Tanpa tes kepribadian kaku
-                          atau penghakiman.
-                        </p>
-                        <button className="pillar-link" onClick={() => go("profile")}>
-                          Atur profil diri <ArrowRight size={14} />
-                        </button>
+                        <div className="pillar-copy-body">
+                          <div className="pillar-icon-box p-indigo">
+                            <UserRound size={20} />
+                          </div>
+                          <h3>Growth DNA</h3>
+                          <p>
+                            Catat minat, tujuan terdekat, dan jam luang mingguanmu dengan jujur. Tanpa tes kepribadian kaku
+                            atau penghakiman.
+                          </p>
+                          <button className="pillar-link" onClick={() => go("profile")}>
+                            <span>Atur profil diri</span> <ArrowRight size={14} />
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="pillar-card">
-                        <div className="pillar-icon-box p-emerald">
-                          <Compass size={24} />
+                      <div className="pillar-card pillar-radar">
+                        <div className="pillar-artwork-box">
+                          <img
+                            src="/images/pillar-radar.jpg"
+                            alt="Opportunity Radar 3D Asset"
+                            className="pillar-artwork-img"
+                          />
+                          <span className="pillar-num-badge">02</span>
                         </div>
-                        <span className="pillar-num">02</span>
-                        <h3>Opportunity Radar</h3>
-                        <p>
-                          Temukan kompetisi, hackathon, esai, dan proyek sosial yang disortir otomatis berdasarkan minat
-                          dan kapasitasmu.
-                        </p>
-                        <button className="pillar-link" onClick={() => go("explore")}>
-                          Jelajahi radar <ArrowRight size={14} />
-                        </button>
+                        <div className="pillar-copy-body">
+                          <div className="pillar-icon-box p-emerald">
+                            <Compass size={20} />
+                          </div>
+                          <h3>Opportunity Radar</h3>
+                          <p>
+                            Temukan kompetisi, hackathon, esai, dan proyek sosial yang disortir otomatis berdasarkan minat
+                            dan kapasitasmu.
+                          </p>
+                          <button className="pillar-link" onClick={() => go("explore")}>
+                            <span>Jelajahi radar</span> <ArrowRight size={14} />
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="pillar-card">
-                        <div className="pillar-icon-box p-amber">
-                          <Timer size={24} />
+                      <div className="pillar-card pillar-check">
+                        <div className="pillar-artwork-box">
+                          <img
+                            src="/images/pillar-check.jpg"
+                            alt="Reality Check 3D Asset"
+                            className="pillar-artwork-img"
+                          />
+                          <span className="pillar-num-badge">03</span>
                         </div>
-                        <span className="pillar-num">03</span>
-                        <h3>Reality Check</h3>
-                        <p>
-                          Kalkulator cerdas yang membandingkan jam kuliah vs jam persiapan. Pastikan kamu punya waktu
-                          istirahat sebelum daftar.
-                        </p>
-                        <button className="pillar-link" onClick={() => go("check", "design")}>
-                          Cek kalkulator <ArrowRight size={14} />
-                        </button>
+                        <div className="pillar-copy-body">
+                          <div className="pillar-icon-box p-amber">
+                            <Timer size={20} />
+                          </div>
+                          <h3>Reality Check</h3>
+                          <p>
+                            Kalkulator cerdas yang membandingkan jam kuliah vs jam persiapan. Pastikan kamu punya waktu
+                            istirahat sebelum daftar.
+                          </p>
+                          <button className="pillar-link" onClick={() => go("check", "design")}>
+                            <span>Cek kalkulator</span> <ArrowRight size={14} />
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="pillar-card">
-                        <div className="pillar-icon-box p-rose">
-                          <Map size={24} />
+                      <div className="pillar-card pillar-bridge">
+                        <div className="pillar-artwork-box">
+                          <img
+                            src="/images/pillar-bridge.jpg"
+                            alt="Confidence Bridge 3D Asset"
+                            className="pillar-artwork-img"
+                          />
+                          <span className="pillar-num-badge">04</span>
                         </div>
-                        <span className="pillar-num">04</span>
-                        <h3>Confidence Bridge</h3>
-                        <p>
-                          Ubah keraguan (belum punya portofolio, takut jelek) jadi komitmen jika-maka dan 4 langkah mikro
-                          30 menit.
-                        </p>
-                        <button className="pillar-link" onClick={() => go("plan", "design")}>
-                          Lihat contoh langkah <ArrowRight size={14} />
-                        </button>
+                        <div className="pillar-copy-body">
+                          <div className="pillar-icon-box p-rose">
+                            <Map size={20} />
+                          </div>
+                          <h3>Confidence Bridge</h3>
+                          <p>
+                            Ubah keraguan (belum punya portofolio, takut jelek) jadi komitmen jika-maka dan 4 langkah mikro
+                            30 menit.
+                          </p>
+                          <button className="pillar-link" onClick={() => go("plan", "design")}>
+                            <span>Lihat contoh langkah</span> <ArrowRight size={14} />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </section>
@@ -705,6 +753,18 @@ export default function Workspace() {
                           Geser slider di samping untuk melihat apakah sebuah tantangan lomba atau proyek (estimasi 18 jam
                           persiapan) masuk akal dengan jadwal kuliahmu.
                         </p>
+
+                        <div className="sim-artwork-mini-banner">
+                          <img
+                            src="/images/pillar-check.jpg"
+                            alt="Kalkulator Waktu & Beban"
+                            className="sim-artwork-mini-img"
+                          />
+                          <div className="sim-artwork-badge">
+                            <Sparkles size={13} className="island-spark-icon" />
+                            <span>Real-Time Balance Tracker</span>
+                          </div>
+                        </div>
 
                         <div className="sim-rules-pill">
                           <Info size={16} />
@@ -1061,17 +1121,12 @@ export default function Workspace() {
                             : "Tunas Penjelajah"}
                         </span>
                       </div>
-                      <div className="island-avatar-center">
-                        <div className="island-icon-halo">
-                          {doneCount >= 8 ? (
-                            <Award size={34} strokeWidth={1.8} />
-                          ) : doneCount >= 4 ? (
-                            <Compass size={34} strokeWidth={1.8} />
-                          ) : (
-                            <Leaf size={34} strokeWidth={1.8} />
-                          )}
-                        </div>
-                        <div className="island-glow-ring" />
+                      <div className="island-artwork-wrapper">
+                        <img
+                          src="/images/growth-island.jpg"
+                          alt="Pulau Pertumbuhan Karirin"
+                          className="island-artwork-img"
+                        />
                       </div>
                       <div className="island-micro-metrics">
                         <div className="micro-metric-item">
@@ -1440,6 +1495,14 @@ export default function Workspace() {
                         <span>PASPOR PERTUMBUHAN KARIER</span>
                       </div>
 
+                      <div className="passport-artwork-box">
+                        <img
+                          src="/images/passport-badge.jpg"
+                          alt="Paspor Petualang Karier"
+                          className="passport-artwork-img"
+                        />
+                      </div>
+
                       <div className="passport-user-hero">
                         <div className="passport-avatar-circle">
                           {draft.name.trim() ? draft.name.trim().charAt(0).toUpperCase() : "🌟"}
@@ -1620,6 +1683,21 @@ export default function Workspace() {
                   <ArrowLeft size={16} />
                   <span>Kembali ke Jelajahi Peluang</span>
                 </button>
+
+                <div className="detail-media-hero-banner">
+                  <img
+                    src={oppImages[current.id] || "/images/card-desain.jpg"}
+                    alt={current.title}
+                    className="detail-media-hero-img"
+                  />
+                  <div className="detail-media-hero-overlay" />
+                  <div className="detail-media-hero-badge-row">
+                    <span className={`opp-category-badge-chip ${current.color}`}>
+                      {current.category}
+                    </span>
+                    <span className="opp-demo-pill">DATA CONTOH</span>
+                  </div>
+                </div>
 
                 <div className="detail-hero-header">
                   <div className={`detail-mark-box ${current.color}`}>{current.mark}</div>
@@ -1887,17 +1965,39 @@ export default function Workspace() {
                 />
 
                 {!started ? (
-                  <div className="empty-results-box">
-                    <div className="empty-icon-circle">
-                      <Map size={32} />
+                  <div className="empty-results-box plan-empty-showcase">
+                    <div className="empty-artwork-wrap">
+                      <img
+                        src="/images/journey-steps.jpg"
+                        alt="Jembatan Rencana Karier"
+                        className="empty-artwork-img"
+                      />
                     </div>
-                    <h3>Perjalananmu masih terbuka lebar</h3>
-                    <p>
-                      Pilih satu peluang di Radar, periksa komitmen waktunya, lalu buat rencana langkah pertamamu.
-                    </p>
-                    <button className="button primary" onClick={() => go("explore")}>
-                      Temukan Peluang Pertama <ArrowRight size={15} />
-                    </button>
+                    <div className="empty-copy-block">
+                      <span className="trophy-kicker-tag">
+                        <Sparkles size={12} className="island-spark-icon" />
+                        <span>LANGKAH MIKRO 30 MENIT</span>
+                      </span>
+                      <h2>Perjalananmu masih terbuka lebar.</h2>
+                      <p>
+                        Tak perlu siap segalanya untuk mulai melangkah. Pilih salah satu simulasi rencana di bawah ini untuk
+                        melihat bagaimana 4 langkah mikro dapat memecah tugas besar menjadi tindakan ringan:
+                      </p>
+                      <div className="empty-quick-buttons">
+                        <button className="button primary" onClick={() => go("plan", "design")}>
+                          <span>Coba Rencana Desain Challenge</span>
+                          <ArrowRight size={14} />
+                        </button>
+                        <button className="button outline" onClick={() => go("plan", "essay")}>
+                          <span>Coba Rencana Esai & Riset</span>
+                          <ArrowRight size={14} />
+                        </button>
+                        <button className="button outline" onClick={() => go("explore")}>
+                          <span>Jelajahi Radar Peluang</span>
+                          <ArrowRight size={14} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <>
@@ -2057,6 +2157,28 @@ export default function Workspace() {
                   text="Bertumbuh bukan cuma soal menang atau kalah. Catat apa yang sudah kamu coba, waktu yang dihabiskan, dan pelajaran berharganya."
                 />
 
+                {/* 3D Milestone Trophy Spotlight Panel */}
+                <div className="progress-trophy-spotlight-panel">
+                  <div className="trophy-artwork-wrap">
+                    <img
+                      src="/images/milestone-trophy.jpg"
+                      alt="Piala Milestone Pertumbuhan"
+                      className="trophy-artwork-img"
+                    />
+                  </div>
+                  <div className="trophy-copy-col">
+                    <span className="trophy-kicker-tag">
+                      <Sparkles size={12} className="island-spark-icon" />
+                      <span>RAYAKAN SETIAP LANGKAH KECIL</span>
+                    </span>
+                    <h2>Hasil akhir itu bonus. Pengalaman mencoba adalah modal nyata.</h2>
+                    <p>
+                      Di Karirin, kamu tidak dinilai dari kemenangan atau kegagalan. Setiap jam yang kamu luangkan untuk
+                      bereksperimen dan merefleksikan proses adalah bekal otentik yang tidak akan pernah hilang.
+                    </p>
+                  </div>
+                </div>
+
                 {/* Overall Stats Cards */}
                 <div className="journey-stats-strip">
                   <div className="stat-card">
@@ -2083,15 +2205,29 @@ export default function Workspace() {
                 </div>
 
                 {!started ? (
-                  <div className="empty-results-box">
-                    <div className="empty-icon-circle">
-                      <Flag size={32} />
+                  <div className="empty-results-box progress-empty-showcase">
+                    <div className="empty-artwork-wrap">
+                      <img
+                        src="/images/growth-island.jpg"
+                        alt="Taman Pertumbuhan"
+                        className="empty-artwork-img"
+                      />
                     </div>
-                    <h3>Langkah pertamamu akan tercatat di sini</h3>
-                    <p>Buat rencana dari peluang yang kamu pilih. Progresmu akan mengikuti tindakan nyatamu.</p>
-                    <button className="button primary" onClick={() => go("explore")}>
-                      Jelajahi Peluang Sekarang <ArrowRight size={15} />
-                    </button>
+                    <div className="empty-copy-block">
+                      <span className="trophy-kicker-tag">
+                        <Sparkles size={12} className="island-spark-icon" />
+                        <span>GROWTH JOURNAL</span>
+                      </span>
+                      <h2>Langkah Pertamamu Akan Tercatat di Sini</h2>
+                      <p>
+                        Setiap kali kamu menyelesaikan langkah mikro atau menulis refleksi, progresmu akan terangkum di
+                        etalase piala ini. Mulai dari satu peluang kecil sekarang.
+                      </p>
+                      <button className="button primary" onClick={() => go("explore")}>
+                        <span>Mulai Eksplorasi Sekarang</span>
+                        <ArrowRight size={15} />
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <div className="progress-cards-stack">
