@@ -478,7 +478,7 @@ export default function Workspace() {
         ) : (
           <>
             {/* ========================================================================= */}
-            {/* 1. LANDING PAGE VIEW (Floating Island Hero + Karirin Content) */}
+            {/* 1. LANDING PAGE VIEW (Floating Island Hero + ARAH Content) */}
             {/* ========================================================================= */}
             {view === "landing" && (
               <div className="landing-sky-wrapper">
@@ -633,7 +633,7 @@ export default function Workspace() {
                       <h2 className="section-title">4 Tahap Menemukan Arah Tanpa Rasa Cemas</h2>
                       <p className="section-desc">
                         Kebanyakan mahasiswa berhenti mencoba bukan karena tidak mampu, tapi karena bingung mulai dari
-                        mana dan salah memperhitungkan waktu. Begini cara Karirin membantumu:
+                        mana dan salah memperhitungkan waktu. Begini cara ARAH membantumu:
                       </p>
                     </div>
 
@@ -876,13 +876,13 @@ export default function Workspace() {
                       <BrushSwipe text="TRANSFORMASI MINDSET" className="center-brush" fontSize="11px" />
                       <h2 className="section-title">Berhenti Menunggu Waktu yang "Sempurna"</h2>
                       <p className="section-desc">
-                        Lihat bagaimana cara pandang mahasiswa berubah setelah menggunakan metode Karirin:
+                        Lihat bagaimana cara pandang mahasiswa berubah setelah menggunakan metode ARAH:
                       </p>
                     </div>
 
                     <div className="comparison-grid">
                       <div className="comp-card before">
-                        <div className="comp-badge before-badge">Tanpa Karirin</div>
+                        <div className="comp-badge before-badge">Tanpa ARAH</div>
                         <h3>Sering Merasa Tertinggal & Buntu</h3>
                         <ul className="comp-list">
                           <li>
@@ -907,7 +907,7 @@ export default function Workspace() {
                       </div>
 
                       <div className="comp-card after">
-                        <div className="comp-badge after-badge">Dengan Karirin</div>
+                        <div className="comp-badge after-badge">Dengan ARAH</div>
                         <h3>Melangkah Ringan & Terukur</h3>
                         <ul className="comp-list">
                           <li>
@@ -941,7 +941,7 @@ export default function Workspace() {
                     <div className="testimonials-grid">
                       <div className="testi-card">
                         <p className="testi-quote">
-                          "Dulu aku overthinking berbulan-bulan cuma mau coba kompetisi esai pertama. Di Karirin langkah
+                          "Dulu aku overthinking berbulan-bulan cuma mau coba kompetisi esai pertama. Di ARAH langkah
                           pertamanya cuma bikin draf 30 menit tanpa edit. Ternyata gak seseram yang aku bayangin!"
                         </p>
                         <div className="testi-author">
@@ -993,8 +993,8 @@ export default function Workspace() {
                     <div className="faq-list">
                       {[
                         {
-                          q: "Apakah Karirin berbayar?",
-                          a: "Sama sekali tidak. Karirin adalah platform gratis yang dibuat untuk membantu mahasiswa dan pemula memulai perjalanan bertumbuh tanpa biaya langganan.",
+                          q: "Apakah ARAH berbayar?",
+                          a: "Sama sekali tidak. ARAH adalah platform gratis yang dibuat untuk membantu mahasiswa dan pemula memulai perjalanan bertumbuh tanpa biaya langganan.",
                         },
                         {
                           q: "Apakah saya harus membuat akun atau memasukkan email?",
@@ -1002,11 +1002,11 @@ export default function Workspace() {
                         },
                         {
                           q: "Bagaimana jika saya belum punya pengalaman sama sekali?",
-                          a: "Justru platform ini dirancang khusus untukmu! Karirin membantu mengidentifikasi modal awal yang sering kamu remehkan (seperti tugas kuliah, observasi sederhana, atau rasa ingin tahu) untuk dijadikan bekal pertama.",
+                          a: "Justru platform ini dirancang khusus untukmu! ARAH membantu mengidentifikasi modal awal yang sering kamu remehkan (seperti tugas kuliah, observasi sederhana, atau rasa ingin tahu) untuk dijadikan bekal pertama.",
                         },
                         {
-                          q: "Apakah Karirin mengirimkan pendaftaran langsung ke panitia lomba?",
-                          a: "Tidak. Karirin berfungsi sebagai workspace persiapan pribadi untuk menyusun rencana dan memeriksa kesiapanmu. Pendaftaran resmi tetap dilakukan melalui kanal resmi masing-masing penyelenggara.",
+                          q: "Apakah ARAH mengirimkan pendaftaran langsung ke panitia lomba?",
+                          a: "Tidak. ARAH berfungsi sebagai workspace persiapan pribadi untuk menyusun rencana dan memeriksa kesiapanmu. Pendaftaran resmi tetap dilakukan melalui kanal resmi masing-masing penyelenggara.",
                         },
                       ].map((item, idx) => (
                         <div key={idx} className={`faq-card ${faqOpen === idx ? "open" : ""}`}>
@@ -1058,7 +1058,7 @@ export default function Workspace() {
                       Ada ruang untuk mencoba, belajar, dan menemukan jalanmu sendiri tanpa tekanan.
                     </p>
                   </div>
-                  <div className="edition-badge">KARIRIN · V1.2</div>
+                  <div className="edition-badge">ARAH · V1.2</div>
                 </div>
 
                 {/* Welcome Hero Card with Unified Sky-Meadow Glow */}
@@ -1117,7 +1117,7 @@ export default function Workspace() {
                       <div className="island-artwork-wrapper">
                         <img
                           src="/images/growth-island.jpg"
-                          alt="Pulau Pertumbuhan Karirin"
+                          alt="Pulau Pertumbuhan ARAH"
                           className="island-artwork-img"
                         />
                       </div>
@@ -1552,7 +1552,7 @@ export default function Workspace() {
                 <div className="info-prototype-alert">
                   <Info size={18} />
                   <span>
-                    Semua peluang di prototipe ini adalah <strong>data contoh</strong> untuk simulasi alur belajar Karirin,
+                    Semua peluang di prototipe ini adalah <strong>data contoh</strong> untuk simulasi alur belajar ARAH,
                     bukan pendaftaran resmi dari penyelenggara.
                   </span>
                 </div>
@@ -2166,7 +2166,7 @@ export default function Workspace() {
                     </span>
                     <h2>Hasil akhir itu bonus. Pengalaman mencoba adalah modal nyata.</h2>
                     <p>
-                      Di Karirin, kamu tidak dinilai dari kemenangan atau kegagalan. Setiap jam yang kamu luangkan untuk
+                      Di ARAH, kamu tidak dinilai dari kemenangan atau kegagalan. Setiap jam yang kamu luangkan untuk
                       bereksperimen dan merefleksikan proses adalah bekal otentik yang tidak akan pernah hilang.
                     </p>
                   </div>
@@ -2259,7 +2259,7 @@ function PageHeading({
   kicker,
   title,
   text,
-  badge = "KARIRIN · V1.2",
+  badge = "ARAH · V1.2",
 }: {
   kicker: string;
   title: string;
