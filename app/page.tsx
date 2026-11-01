@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import AccountPanel from "./account-panel";
 import {
   ArrowUpRight,
@@ -351,26 +352,10 @@ export default function Workspace() {
       {/* ========================================================================= */}
       <header className="navbar-top">
         <div className="navbar-container">
-          {/* Brand with Six-petal Flower Icon */}
+          {/* ARAH wordmark */}
           <div className="navbar-brand-group">
-            <button className="brand-button" onClick={() => go("landing")} aria-label="Karirin, Ruang Navigasi Karier">
-              <span className="brand-flower-icon">
-                <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="22" cy="11" r="8.5" fill="#ffffff" />
-                  <circle cx="31.5" cy="16.5" r="8.5" fill="#ffffff" />
-                  <circle cx="31.5" cy="27.5" r="8.5" fill="#ffffff" />
-                  <circle cx="22" cy="33" r="8.5" fill="#ffffff" />
-                  <circle cx="12.5" cy="27.5" r="8.5" fill="#ffffff" />
-                  <circle cx="12.5" cy="16.5" r="8.5" fill="#ffffff" />
-                  <circle cx="22" cy="22" r="7.5" fill="#ffffff" />
-                </svg>
-              </span>
-              <div className="brand-text-block">
-                <span className="brand-title">
-                  karirin<span className="brand-dot">.</span>
-                </span>
-                <span className="brand-tag">RUANG MULAI</span>
-              </div>
+            <button className="brand-button" onClick={() => go("landing")} aria-label="ARAH, kembali ke beranda">
+              <Image className="arah-wordmark" src="/images/arah-logo.png" alt="ARAH" width={2170} height={725} sizes="(max-width: 640px) 112px, 144px" />
             </button>
           </div>
 

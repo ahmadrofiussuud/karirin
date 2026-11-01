@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Karirin — Ruang Navigasi Karier & Eksplorasi Peluang Mahasiswa",
+  title: "ARAH — Ruang Navigasi Karier & Eksplorasi Peluang Mahasiswa",
   description:
     "Platform navigasi karier mahasiswa. Kenali kapasitas waktu mingguan, temukan peluang terkurasi, lakukan reality check beban, dan ambil langkah pertamamu tanpa overthinking.",
 };

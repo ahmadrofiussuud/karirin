@@ -302,6 +302,21 @@ svg { flex-shrink: 0; vertical-align: middle; }
   cursor: pointer;
 }
 
+.arah-wordmark {
+  display: block;
+  width: 144px;
+  height: auto;
+  filter: brightness(0) saturate(100%) invert(18%) sepia(36%) saturate(1452%) hue-rotate(176deg) brightness(91%) contrast(95%);
+}
+
+.is-landing-active .arah-wordmark {
+  filter: none;
+}
+
+@media (max-width: 640px) {
+  .arah-wordmark { width: 112px; }
+}
+
 .brand-flower-icon {
   width: 36px;
   height: 36px;
