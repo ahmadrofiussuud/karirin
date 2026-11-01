@@ -7,7 +7,10 @@ export function authErrorMessage(error: { code?: string; status?: number }, sign
     case "over_request_rate_limit":
       return "Terlalu banyak percobaan. Tunggu beberapa menit sebelum mencoba lagi.";
     case "email_not_confirmed":
-      return "Email belum dikonfirmasi. Buka tautan konfirmasi di inbox atau spam sebelum masuk.";
+      return "Akun lama ini masih menunggu aktivasi. Hubungi pengelola agar akun dapat dipakai tanpa konfirmasi email.";
+    case "email_exists":
+    case "user_already_exists":
+      return "Akun sudah terdaftar. Gunakan tombol Masuk dengan email dan password yang pernah kamu buat.";
     case "weak_password":
       return "Password belum memenuhi ketentuan keamanan. Gunakan password yang lebih kuat dengan minimal 8 karakter.";
     case "email_address_invalid":
@@ -21,6 +24,6 @@ export function authErrorMessage(error: { code?: string; status?: number }, sign
     default:
       if (error.status === 429) return "Batas percobaan sementara tercapai. Tunggu beberapa menit sebelum mencoba lagi.";
       if (error.status && error.status >= 500) return "Layanan akun sedang mengalami gangguan. Silakan coba lagi nanti.";
-      return signup ? "Pendaftaran belum berhasil. Periksa email dan password, atau coba lagi nanti." : "Belum bisa masuk. Periksa email, password, dan konfirmasi emailmu.";
+      return signup ? "Pendaftaran belum berhasil. Periksa email dan password, atau coba lagi nanti." : "Belum bisa masuk. Periksa email dan passwordmu.";
   }
 }

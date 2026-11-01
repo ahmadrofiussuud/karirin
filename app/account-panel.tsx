@@ -83,13 +83,13 @@ export default function AccountPanel({ state, onIdentity, onLoading }: Props) {
     setBusy(true); setMessage("");
     try {
       const result = signup
-        ? await supabase.auth.signUp({ email: email.trim(), password, options: { emailRedirectTo: window.location.origin } })
+        ? await supabase.auth.signUp({ email: email.trim(), password })
         : await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (result.error) {
         setMessage(authErrorMessage(result.error, signup));
       } else {
         setPassword("");
-        setMessage(signup && !result.data.session ? "Periksa email untuk mengonfirmasi akun, lalu masuk di sini." : "Berhasil masuk. Memuat catatan akun…");
+        setMessage(signup && !result.data.session ? "Akun belum dapat masuk otomatis. Coba tombol Masuk; jika masih gagal, hubungi pengelola." : signup ? "Akun berhasil dibuat. Memuat ruang bertumbuhmu…" : "Berhasil masuk. Memuat catatan akun…");
       }
     } catch { setMessage("Koneksi terputus. Silakan coba lagi."); }
     finally { setBusy(false); }
@@ -134,7 +134,7 @@ export default function AccountPanel({ state, onIdentity, onLoading }: Props) {
         <p>{signup ? "Buat akun untuk menyimpan profil dan progres lintas perangkat." : "Masuk untuk melanjutkan catatan yang tersimpan di akunmu."}</p>
         <label>Email<input type="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)} /></label>
         <label>Password<input type="password" autoComplete={signup ? "new-password" : "current-password"} minLength={8} required value={password} onChange={e => setPassword(e.target.value)} /></label>
-        {signup && <small>Gunakan minimal 8 karakter. Konfirmasi akun melalui email sebelum masuk.</small>}
+        {signup && <small>Gunakan minimal 8 karakter. Setelah daftar, kamu langsung masuk tanpa konfirmasi email.</small>}
         <button className="button primary full" disabled={busy}>{busy ? "Sebentar…" : signup ? "Daftar akun" : "Masuk"}</button>
         <button type="button" className="account-switch" disabled={busy} onClick={() => { setSignup(!signup); setMessage(""); }}>{signup ? "Sudah punya akun? Masuk" : "Belum punya akun? Daftar"}</button>
       </form>}

@@ -9,7 +9,8 @@ test("Signup distinguishes email infrastructure failures from user input", () =>
 });
 
 test("Login preserves useful confirmation and retry guidance without echoing server details", () => {
-  assert.match(authErrorMessage({ code: "email_not_confirmed" }, false), /belum dikonfirmasi/);
+  assert.match(authErrorMessage({ code: "email_not_confirmed" }, false), /Akun lama ini masih menunggu aktivasi/);
+  assert.match(authErrorMessage({ code: "user_already_exists" }, true), /Gunakan tombol Masuk/);
   assert.match(authErrorMessage({ status: 429 }, false), /Tunggu beberapa menit/);
   assert.match(authErrorMessage({ status: 503 }, false), /Layanan akun sedang mengalami gangguan/);
 });
