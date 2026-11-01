@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { User } from "@supabase/supabase-js";
 import { getSupabase } from "@/lib/supabase";
+import { authErrorMessage } from "@/lib/auth-errors";
 import { initialState, parseState, type State } from "@/lib/domain";
 
 type Props = {
@@ -85,7 +86,7 @@ export default function AccountPanel({ state, onIdentity, onLoading }: Props) {
         ? await supabase.auth.signUp({ email: email.trim(), password, options: { emailRedirectTo: window.location.origin } })
         : await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (result.error) {
-        setMessage(signup ? "Pendaftaran belum berhasil. Periksa email dan password, atau coba lagi nanti." : "Belum bisa masuk. Periksa email, password, dan konfirmasi emailmu.");
+        setMessage(authErrorMessage(result.error, signup));
       } else {
         setPassword("");
         setMessage(signup && !result.data.session ? "Periksa email untuk mengonfirmasi akun, lalu masuk di sini." : "Berhasil masuk. Memuat catatan akun…");
