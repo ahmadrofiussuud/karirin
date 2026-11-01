@@ -413,6 +413,23 @@ svg { flex-shrink: 0; vertical-align: middle; }
   background: var(--amber);
 }
 
+/* Account access */
+.account-trigger { padding: 8px 14px; border: 1px solid var(--border); border-radius: var(--radius-full); background: white; color: var(--text-main); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.account-dialog { position: fixed; inset: 0; width: min(440px, calc(100% - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 28px; overflow-y: auto; border: 1px solid var(--border); border-radius: 24px; background: #fff; color: var(--text-main); box-shadow: var(--shadow-xl); }
+.account-dialog::backdrop { background: rgba(15, 23, 42, .55); backdrop-filter: blur(5px); }
+.account-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.account-eyebrow { color: #24598b; font-size: 10px; letter-spacing: .12em; font-weight: 700; }
+.account-heading button { width: 40px; height: 40px; font-size: 28px; border-radius: 50%; background: var(--surface-hover); }
+.account-dialog h2 { margin: 16px 0 12px; font-family: var(--font-serif); font-size: 30px; font-weight: 400; }
+.account-dialog p { margin-bottom: 16px; font-size: 13px; line-height: 1.7; }
+.account-dialog label { display: grid; gap: 6px; margin: 16px 0; font-size: 12px; font-weight: 600; }
+.account-dialog input { width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: #f8fafc; color: var(--text-main); font: inherit; font-size: 16px; }
+.account-dialog .button { margin-top: 14px; }
+.account-dialog small { display: block; color: var(--text-muted); font-size: 11px; }
+.account-switch { display: block; margin: 20px auto 0; color: #24598b; font-size: 12px; }
+.account-message { margin-top: 18px; padding: 12px; border-radius: 10px; background: var(--sky-light); overflow-wrap: anywhere; }
+.account-email { font-weight: 600; overflow-wrap: anywhere; }
+
 /* Right Tools */
 .navbar-end {
   display: flex;

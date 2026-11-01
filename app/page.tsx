@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import AccountPanel from "./account-panel";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -103,6 +104,8 @@ function BrushSwipe({
 export default function Workspace() {
   const [state, setState] = useState<State>(initialState);
   const [ready, setReady] = useState(false);
+  const [accountId, setAccountId] = useState<string | null>(null);
+  const [accountLoading, setAccountLoading] = useState(false);
   const [view, setView] = useState<View>("landing");
   const [selected, setSelected] = useState("design");
   const [notice, setNotice] = useState("");
@@ -161,13 +164,13 @@ export default function Workspace() {
   }, []);
 
   useEffect(() => {
-    if (!ready || storageError) return;
+    if (!ready || storageError || accountLoading) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(accountId ? `${STORAGE_KEY}.${accountId}` : STORAGE_KEY, JSON.stringify(state));
     } catch {
       setStorageError("Penyimpanan penuh atau diblokir. Ekspor catatan agar perubahanmu tidak hilang.");
     }
-  }, [state, ready, storageError]);
+  }, [state, ready, storageError, accountId, accountLoading]);
 
   useEffect(() => {
     if (!notice) return;
@@ -394,6 +397,11 @@ export default function Workspace() {
 
           {/* Right Action Tools */}
           <div className="navbar-end">
+            <AccountPanel state={state} onLoading={setAccountLoading} onIdentity={(id, data) => {
+              setAccountId(id);
+              setState(data);
+              setDraft(data.profile);
+            }} />
             <button className="action-pill-btn" onClick={exportData} title="Ekspor catatan ke file JSON">
               <span className="desktop-only">Ekspor</span>
             </button>
@@ -477,7 +485,7 @@ export default function Workspace() {
           </div>
         )}
 
-        {!ready ? (
+        {!ready || accountLoading ? (
           <div className="loading-state">
             <Sparkles className="spin-slow" size={24} />
             <span>Menyiapkan ruang bertumbuhmu…</span>
@@ -1005,7 +1013,7 @@ export default function Workspace() {
                         },
                         {
                           q: "Apakah saya harus membuat akun atau memasukkan email?",
-                          a: "Tidak perlu. Semua data profil, simulasi, dan rencana langkahmu tersimpan langsung di browser lokal perangkatmu (localStorage). Kamu juga bisa mengekspor data ke file JSON kapan saja.",
+                          a: "Kamu bisa mencoba tanpa akun; catatan tersimpan otomatis di browser. Untuk melanjutkan lintas perangkat, daftar dan masuk, lalu gunakan tombol Simpan ke akun di menu Akun. Kamu juga bisa mengekspor catatan ke file JSON.",
                         },
                         {
                           q: "Bagaimana jika saya belum punya pengalaman sama sekali?",
@@ -1521,7 +1529,7 @@ export default function Workspace() {
                       <hr className="divider" />
                       <div className="side-info-alert">
                         <ShieldCheck size={16} />
-                        <small>Data profilmu tersimpan aman secara privat di browsermu.</small>
+                        <small>{accountId ? "Perubahan tersimpan di browser. Gunakan menu Akun untuk menyimpan ke akunmu." : "Data profil tersimpan di browser perangkat ini. Masuk ke akun untuk menyimpan lintas perangkat."}</small>
                       </div>
 
                       <div className="side-preview-capsule">
